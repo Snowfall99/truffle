@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"truffle.io/model"
 	"truffle.io/server"
 )
 
@@ -18,8 +19,9 @@ func CreateServer() func() {
 		Port: 8081,
 	})
 
+	bfts := []model.BFT{}
 	go func() {
-		if err := s.Start(); err != nil {
+		if err := s.Start(bfts); err != nil {
 			panic(err)
 		}
 	}()

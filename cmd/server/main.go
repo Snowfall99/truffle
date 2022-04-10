@@ -10,7 +10,9 @@ import (
 
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
+	"truffle.io/config"
 	"truffle.io/server"
+	"truffle.io/storage"
 )
 
 func main() {
@@ -29,6 +31,20 @@ func start() int {
 		// so we probably cannot write using fmt.Println either. So just ignore the error.
 		_ = log.Sync()
 	}()
+
+	config, err := config.GetConfig("truffle.config")
+	if err != nil {
+		log.Info("config.GetConfig", zap.Error(err))
+		return 1
+	}
+	config.DBOptions.Log = log
+	db := storage.NewDatabase(config.DBOptions)
+	err = db.Connect()
+	if err != nil {
+		log.Info("storage.NewDatabase", zap.Error(err))
+		return 1
+	}
+	bfts := db.FindBFTs()
 
 	host := getStringOrDefault("HOST", "localhost")
 	port := getIntOrDefault("PORT", 8080)
@@ -52,7 +68,7 @@ func start() int {
 		return nil
 	})
 
-	if err := s.Start(); err != nil {
+	if err := s.Start(bfts); err != nil {
 		log.Info("Error starting server", zap.Error(err))
 		return 1
 	}

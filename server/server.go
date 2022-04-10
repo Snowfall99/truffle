@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
+	"truffle.io/model"
 )
 
 type Server struct {
@@ -49,8 +50,8 @@ func New(opts Options) *Server {
 }
 
 // Start the Server by setting up routes and listening for HTTP requests on the given address.
-func (s *Server) Start() error {
-	s.setupRoutes()
+func (s *Server) Start(bfts []model.BFT) error {
+	s.setupRoutes(bfts)
 	s.log.Info("Starting", zap.String("address", s.address))
 	err := s.server.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
