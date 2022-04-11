@@ -65,6 +65,6 @@ func (d *Database) createDataSourceName(withPassword bool) string {
 
 func (d *Database) FindBFTs() []model.BFT {
 	var bfts []model.BFT
-	d.db.Find(&bfts)
+	d.db.Order("name asc").Find(&bfts)
 	return bfts
 }
