@@ -7,8 +7,8 @@ import (
 
 func (s *Server) setupRoutes(bfts []model.BFT) {
 	handlers.Health(s.mux)
-	handlers.FrontPage(s.mux, bfts)
+	handlers.FrontPage(s.mux, s.log, bfts)
 	for _, bft := range bfts {
-		handlers.NormalPage(s.mux, bft)
+		handlers.NormalPage(s.mux, s.log, bft)
 	}
 }
