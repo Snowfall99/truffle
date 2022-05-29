@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  truffle:
+    build: .
+    ports:
+      - 8081:8080
+    command: ["./wait-for-it.sh", "mysql:3306", "--", "./server"]
+    environment:
+      HOST: ""
+  mysql:
+    image: "mysql:latest"
+    restart: always
+    environment:
+      MYSQL_DATABASE: "test"
+      MYSQL_ROOT_PASSWORD: mysql
+    ports:
+      - 3306:3306
+    security_opt:
+      - seccomp:unconfined
